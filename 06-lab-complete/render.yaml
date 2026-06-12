@@ -37,3 +37,39 @@ services:
     name: redis-production
     plan: free
     ipAllowList: []
+
+  - type: web
+    name: longchau-streamlit
+    runtime: docker
+    region: singapore
+    plan: free
+    healthCheckPath: /
+    autoDeploy: true
+    dockerfilePath: 06-lab-complete/frontend/Dockerfile
+    dockerContext: 06-lab-complete/frontend
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: ai-agent-production
+          property: host
+      - key: AGENT_API_KEY
+        value: my-secret-key
+
+  - type: web
+    name: longchau-static
+    runtime: docker
+    region: singapore
+    plan: free
+    healthCheckPath: /
+    autoDeploy: true
+    dockerfilePath: 06-lab-complete/static-shell/Dockerfile
+    dockerContext: 06-lab-complete/static-shell
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: ai-agent-production
+          property: host
+      - key: AGENT_API_KEY
+        value: my-secret-key

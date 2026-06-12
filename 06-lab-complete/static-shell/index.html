@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nhà Thuốc Long Châu - Hệ thống nhà thuốc tiêu chuẩn GPP</title>
+  <link rel="icon" href="https://nhathuoclongchau.com.vn/favicon.ico" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; background: #f5f5f5; }
+
+    /* ── HEADER ── */
+    .lc-topbar { background: #006FB6; padding: 6px 0; font-size: 12px; color: rgba(255,255,255,0.85); }
+    .lc-topbar .inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
+    .lc-topbar a { color: inherit; text-decoration: none; margin-left: 16px; }
+    .lc-topbar a:hover { text-decoration: underline; }
+
+    .lc-header { background: #fff; border-bottom: 2px solid #e8e8e8; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .lc-header .inner { max-width: 1200px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 24px; }
+    .lc-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+    .lc-logo-icon { width: 44px; height: 44px; background: #006FB6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; font-weight: 900; }
+    .lc-logo-text { line-height: 1.2; }
+    .lc-logo-text .name { font-size: 18px; font-weight: 800; color: #006FB6; }
+    .lc-logo-text .tagline { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .lc-search { flex: 1; position: relative; }
+    .lc-search input { width: 100%; padding: 10px 44px 10px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .lc-search input:focus { border-color: #006FB6; }
+    .lc-search button { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #006FB6; font-size: 18px; }
+
+    .lc-header-actions { display: flex; gap: 20px; align-items: center; flex-shrink: 0; }
+    .lc-header-actions a { text-decoration: none; color: #555; font-size: 13px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .lc-header-actions a:hover { color: #006FB6; }
+    .lc-header-actions .icon { font-size: 20px; }
+
+    .lc-nav { background: #006FB6; }
+    .lc-nav .inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; gap: 0; }
+    .lc-nav a { color: rgba(255,255,255,0.9); text-decoration: none; padding: 11px 18px; font-size: 14px; font-weight: 500; display: block; transition: background 0.15s; border-right: 1px solid rgba(255,255,255,0.15); }
+    .lc-nav a:hover, .lc-nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ── HERO ── */
+    .lc-hero { background: linear-gradient(135deg, #006FB6 0%, #0085D2 50%, #00A3E0 100%); color: white; padding: 48px 16px; }
+    .lc-hero .inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .lc-hero h1 { font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 16px; }
+    .lc-hero h1 span { color: #FFD700; }
+    .lc-hero p { font-size: 15px; opacity: 0.9; line-height: 1.7; margin-bottom: 24px; }
+    .lc-hero-btns { display: flex; gap: 12px; }
+    .lc-btn-primary { background: #FFD700; color: #006FB6; border: none; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; transition: transform 0.1s; display: inline-block; }
+    .lc-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .lc-btn-outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.7); padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.15s; display: inline-block; }
+    .lc-btn-outline:hover { background: rgba(255,255,255,0.15); border-color: white; }
+
+    .lc-hero-visual { display: flex; justify-content: center; align-items: center; }
+    .lc-hero-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); border-radius: 16px; padding: 28px; width: 300px; }
+    .lc-hero-card h3 { font-size: 16px; margin-bottom: 16px; opacity: 0.9; }
+    .lc-hero-card .stat { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; }
+    .lc-hero-card .stat-icon { font-size: 24px; }
+    .lc-hero-card .stat-info .num { font-size: 18px; font-weight: 700; }
+    .lc-hero-card .stat-info .label { font-size: 12px; opacity: 0.8; }
+
+    /* ── QUICK CATEGORIES ── */
+    .lc-section { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+    .lc-section-title { font-size: 20px; font-weight: 700; color: #222; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #006FB6; display: inline-block; }
+
+    .lc-cats { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+    .lc-cat { text-align: center; text-decoration: none; color: #444; padding: 16px 8px; background: white; border-radius: 12px; border: 1px solid #eee; transition: all 0.15s; }
+    .lc-cat:hover { border-color: #006FB6; color: #006FB6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,111,182,0.12); }
+    .lc-cat .cat-icon { font-size: 28px; margin-bottom: 8px; }
+    .lc-cat .cat-name { font-size: 12px; font-weight: 500; line-height: 1.3; }
+
+    /* ── PROMO BANNER ── */
+    .lc-promo-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .lc-promo-card { border-radius: 12px; overflow: hidden; position: relative; min-height: 160px; display: flex; align-items: flex-end; padding: 20px; color: white; }
+    .lc-promo-card.main { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); min-height: 200px; }
+    .lc-promo-card.blue { background: linear-gradient(135deg, #006FB6 0%, #0085D2 100%); }
+    .lc-promo-card.green { background: linear-gradient(135deg, #27AE60 0%, #2ECC71 100%); }
+    .lc-promo-card .promo-bg { position: absolute; right: 16px; top: 16px; font-size: 64px; opacity: 0.25; }
+    .lc-promo-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .lc-promo-card p { font-size: 12px; opacity: 0.9; }
+    .lc-promo-tag { display: inline-block; background: #FFD700; color: #333; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px; }
+
+    /* ── PRODUCTS ── */
+    .lc-products { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .lc-product { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; transition: all 0.15s; text-decoration: none; color: inherit; }
+    .lc-product:hover { border-color: #006FB6; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .lc-product-img { height: 160px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+    .lc-product-info { padding: 12px; }
+    .lc-product-badge { display: inline-block; background: #FFF3E0; color: #E65100; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-bottom: 6px; }
+    .lc-product-name { font-size: 13px; font-weight: 600; color: #222; margin-bottom: 6px; line-height: 1.4; }
+    .lc-product-price { font-size: 16px; font-weight: 700; color: #D32F2F; }
+    .lc-product-price .unit { font-size: 11px; color: #999; font-weight: 400; }
+    .lc-product-old-price { font-size: 12px; color: #bbb; text-decoration: line-through; margin-bottom: 2px; }
+
+    /* ── TRUST BADGES ── */
+    .lc-trust { background: white; padding: 32px 16px; border-top: 1px solid #eee; }
+    .lc-trust .inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .lc-trust-item { text-align: center; }
+    .lc-trust-item .trust-icon { font-size: 36px; margin-bottom: 10px; }
+    .lc-trust-item h4 { font-size: 14px; font-weight: 700; color: #006FB6; margin-bottom: 6px; }
+    .lc-trust-item p { font-size: 12px; color: #777; line-height: 1.5; }
+
+    /* ── FOOTER ── */
+    .lc-footer { background: #1a1a2e; color: rgba(255,255,255,0.8); padding: 40px 16px 20px; }
+    .lc-footer .inner { max-width: 1200px; margin: 0 auto; }
+    .lc-footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+    .lc-footer-brand .brand-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .lc-footer-brand .brand-logo .icon { font-size: 32px; }
+    .lc-footer-brand .brand-logo .text { font-size: 20px; font-weight: 800; color: white; }
+    .lc-footer-brand p { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
+    .lc-footer-brand .hotline { font-size: 20px; font-weight: 700; color: #FFD700; }
+    .lc-footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .lc-footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; margin-bottom: 8px; }
+    .lc-footer-col a:hover { color: white; }
+    .lc-footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.4); }
+
+    .lc-bg-white { background: white; }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="lc-topbar">
+  <div class="inner">
+    <span>🏪 Hệ thống nhà thuốc chuẩn GPP lớn nhất Việt Nam</span>
+    <div>
+      <a href="#">Tra cứu đơn hàng</a>
+      <a href="#">Tải ứng dụng</a>
+      <a href="#">Hệ thống cửa hàng</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="lc-header">
+  <div class="inner">
+    <a class="lc-logo" href="#">
+      <div class="lc-logo-icon">LC</div>
+      <div class="lc-logo-text">
+        <div class="name">Long Châu</div>
+        <div class="tagline">Chuẩn - Nhanh - Tốt</div>
+      </div>
+    </a>
+
+    <div class="lc-search">
+      <input type="text" placeholder="Tìm kiếm thuốc, thực phẩm chức năng, thiết bị y tế..." />
+      <button>🔍</button>
+    </div>
+
+    <div class="lc-header-actions">
+      <a href="#">
+        <span class="icon">📍</span>
+        <span>Cửa hàng</span>
+      </a>
+      <a href="#">
+        <span class="icon">🛒</span>
+        <span>Giỏ hàng</span>
+      </a>
+      <a href="#">
+        <span class="icon">👤</span>
+        <span>Đăng nhập</span>
+      </a>
+    </div>
+  </div>
+
+  <nav class="lc-nav">
+    <div class="inner">
+      <a href="#" class="active">Trang chủ</a>
+      <a href="#">Thuốc</a>
+      <a href="#">Thực phẩm chức năng</a>
+      <a href="#">Chăm sóc sức khỏe</a>
+      <a href="#">Sắc đẹp</a>
+      <a href="#">Thiết bị y tế</a>
+      <a href="#">Mẹ & Bé</a>
+      <a href="#">Tra cứu thuốc</a>
+      <a href="#">Tin tức</a>
+    </div>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="lc-hero">
+  <div class="inner">
+    <div>
+      <h1>Chăm sóc sức khỏe <span>toàn diện</span> — Tư vấn tận tâm</h1>
+      <p>Hơn 1.700 nhà thuốc trên toàn quốc. Đội ngũ dược sĩ chuyên nghiệp tư vấn 24/7. Thuốc chính hãng, giá tốt, giao hàng nhanh.</p>
+      <div class="lc-hero-btns">
+        <a href="#" class="lc-btn-primary">Mua ngay</a>
+        <a href="#" class="lc-btn-outline">Tư vấn dược sĩ</a>
+      </div>
+    </div>
+    <div class="lc-hero-visual">
+      <div class="lc-hero-card">
+        <h3>📊 Long Châu toàn quốc</h3>
+        <div class="stat">
+          <span class="stat-icon">🏪</span>
+          <div class="stat-info">
+            <div class="num">1.700+</div>
+            <div class="label">Nhà thuốc chuẩn GPP</div>
+          </div>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">💊</span>
+          <div class="stat-info">
+            <div class="num">30.000+</div>
+            <div class="label">Sản phẩm chính hãng</div>
+          </div>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">🧑‍⚕️</span>
+          <div class="stat-info">
+            <div class="num">5.000+</div>
+            <div class="label">Dược sĩ tư vấn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<div class="lc-section">
+  <div class="lc-section-title">Danh mục sản phẩm</div>
+  <div class="lc-cats">
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">💊</div>
+      <div class="cat-name">Thuốc thường dùng</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">🌿</div>
+      <div class="cat-name">Thực phẩm chức năng</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">🩺</div>
+      <div class="cat-name">Thiết bị y tế</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">👶</div>
+      <div class="cat-name">Mẹ & Bé</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">💆</div>
+      <div class="cat-name">Chăm sóc da</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">🦷</div>
+      <div class="cat-name">Chăm sóc răng miệng</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">🏃</div>
+      <div class="cat-name">Thể thao & dinh dưỡng</div>
+    </a>
+    <a class="lc-cat" href="#">
+      <div class="cat-icon">🌡️</div>
+      <div class="cat-name">Đo lường & xét nghiệm</div>
+    </a>
+  </div>
+</div>
+
+<!-- Promo Banners -->
+<div class="lc-section">
+  <div class="lc-promo-grid">
+    <div class="lc-promo-card main">
+      <span class="promo-bg">💊</span>
+      <div>
+        <div class="lc-promo-tag">FLASH SALE</div>
+        <h3>Vitamin & Khoáng chất<br/>Giảm đến 40%</h3>
+        <p>Chỉ hôm nay • Hàng có hạn</p>
+      </div>
+    </div>
+    <div class="lc-promo-card blue">
+      <span class="promo-bg">🤱</span>
+      <div>
+        <div class="lc-promo-tag">MỚI</div>
+        <h3>Sữa Mẹ & Bé</h3>
+        <p>Thêm 5% khi đặt online</p>
+      </div>
+    </div>
+    <div class="lc-promo-card green">
+      <span class="promo-bg">🌿</span>
+      <div>
+        <div class="lc-promo-tag">BÁN CHẠY</div>
+        <h3>Thảo dược tự nhiên</h3>
+        <p>Hàng chính hãng • GPP</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Products -->
+<div class="lc-section lc-bg-white" style="background:white;max-width:100%;padding:32px 0;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 16px;">
+    <div class="lc-section-title">Sản phẩm bán chạy</div>
+    <div class="lc-products">
+      <a class="lc-product" href="#">
+        <div class="lc-product-img">💊</div>
+        <div class="lc-product-info">
+          <div class="lc-product-badge">BÁN CHẠY</div>
+          <div class="lc-product-name">Paracetamol 500mg Pharmedic (100 viên)</div>
+          <div class="lc-product-old-price">25.000đ</div>
+          <div class="lc-product-price">19.500đ <span class="unit">/hộp</span></div>
+        </div>
+      </a>
+      <a class="lc-product" href="#">
+        <div class="lc-product-img">🌿</div>
+        <div class="lc-product-info">
+          <div class="lc-product-badge">MỚI</div>
+          <div class="lc-product-name">Vitamin C 1000mg DHG Nature (30 gói)</div>
+          <div class="lc-product-old-price">95.000đ</div>
+          <div class="lc-product-price">79.000đ <span class="unit">/hộp</span></div>
+        </div>
+      </a>
+      <a class="lc-product" href="#">
+        <div class="lc-product-img">💧</div>
+        <div class="lc-product-info">
+          <div class="lc-product-badge">SALE</div>
+          <div class="lc-product-name">Dung dịch vệ sinh mũi NaCl 0.9% (500ml)</div>
+          <div class="lc-product-old-price">28.000đ</div>
+          <div class="lc-product-price">22.000đ <span class="unit">/chai</span></div>
+        </div>
+      </a>
+      <a class="lc-product" href="#">
+        <div class="lc-product-img">🩸</div>
+        <div class="lc-product-info">
+          <div class="lc-product-badge">HOT</div>
+          <div class="lc-product-name">Máy đo đường huyết Accu-Chek Instant</div>
+          <div class="lc-product-old-price">650.000đ</div>
+          <div class="lc-product-price">545.000đ <span class="unit">/máy</span></div>
+        </div>
+      </a>
+      <a class="lc-product" href="#">
+        <div class="lc-product-img">💆</div>
+        <div class="lc-product-info">
+          <div class="lc-product-badge">BÁN CHẠY</div>
+          <div class="lc-product-name">Kem chống nắng La Roche-Posay SPF50+ (50ml)</div>
+          <div class="lc-product-old-price">420.000đ</div>
+          <div class="lc-product-price">355.000đ <span class="unit">/tuýt</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Trust badges -->
+<div class="lc-trust">
+  <div class="inner">
+    <div class="lc-trust-item">
+      <div class="trust-icon">✅</div>
+      <h4>Thuốc chính hãng 100%</h4>
+      <p>Cam kết chính hãng, đầy đủ hóa đơn, nguồn gốc rõ ràng từ nhà sản xuất uy tín</p>
+    </div>
+    <div class="lc-trust-item">
+      <div class="trust-icon">🚚</div>
+      <h4>Giao hàng nhanh 2h</h4>
+      <p>Giao hàng trong vòng 2 giờ tại TP.HCM, Hà Nội và các thành phố lớn</p>
+    </div>
+    <div class="lc-trust-item">
+      <div class="trust-icon">🧑‍⚕️</div>
+      <h4>Dược sĩ tư vấn 24/7</h4>
+      <p>Đội ngũ dược sĩ có chuyên môn cao, sẵn sàng tư vấn miễn phí mọi lúc</p>
+    </div>
+    <div class="lc-trust-item">
+      <div class="trust-icon">🔄</div>
+      <h4>Đổi trả dễ dàng</h4>
+      <p>Hoàn tiền 100% nếu sản phẩm không đúng yêu cầu hoặc bị lỗi</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="lc-footer">
+  <div class="inner">
+    <div class="lc-footer-grid">
+      <div class="lc-footer-brand">
+        <div class="brand-logo">
+          <span class="icon">💊</span>
+          <span class="text">Long Châu</span>
+        </div>
+        <p>Hệ thống nhà thuốc tiêu chuẩn GPP lớn nhất Việt Nam. Cam kết cung cấp sản phẩm chất lượng cao với giá tốt nhất.</p>
+        <div class="hotline">📞 1800 6928</div>
+      </div>
+      <div class="lc-footer-col">
+        <h4>Về Long Châu</h4>
+        <a href="#">Giới thiệu</a>
+        <a href="#">Hệ thống cửa hàng</a>
+        <a href="#">Tuyển dụng</a>
+        <a href="#">Tin tức</a>
+      </div>
+      <div class="lc-footer-col">
+        <h4>Hỗ trợ</h4>
+        <a href="#">Hướng dẫn mua hàng</a>
+        <a href="#">Chính sách đổi trả</a>
+        <a href="#">Câu hỏi thường gặp</a>
+        <a href="#">Liên hệ</a>
+      </div>
+      <div class="lc-footer-col">
+        <h4>Kết nối</h4>
+        <a href="#">Facebook</a>
+        <a href="#">Zalo</a>
+        <a href="#">YouTube</a>
+        <a href="#">Instagram</a>
+      </div>
+    </div>
+    <div class="lc-footer-bottom">
+      © 2024 Công ty Cổ phần Dược phẩm FPT Long Châu. Giấy phép kinh doanh số: 0107631609.
+    </div>
+  </div>
+</footer>
+
+<!-- Chat Widget Config & Script -->
+<script>
+  window.LC_BACKEND_URL = '__BACKEND_URL__';
+  window.LC_AGENT_API_KEY = '__AGENT_API_KEY__';
+</script>
+<script src="./chat-widget.js"></script>
+
+</body>
+</html>
