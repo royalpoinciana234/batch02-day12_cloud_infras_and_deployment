@@ -423,13 +423,24 @@
         body: JSON.stringify({ message, history }),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`HTTP_${res.status}`);
       const data = await res.json();
       history.push({ role: 'assistant', content: data.reply });
       renderMessage(data, message);
     } catch (err) {
       history.pop(); // revert user message from history on error
-      renderError('Không thể kết nối. Vui lòng thử lại sau.');
+      if (err.message && err.message.startsWith('HTTP_')) {
+        const status = err.message.split('_')[1];
+        if (status === '401') {
+          renderError('Lỗi xác thực (401): AGENT_API_KEY không hợp lệ hoặc không khớp giữa frontend và backend.');
+        } else if (status === '429') {
+          renderError('Quá giới hạn số lượng yêu cầu (429). Vui lòng thử lại sau 1 phút.');
+        } else {
+          renderError(`Lỗi máy chủ (${status}). Vui lòng thử lại sau.`);
+        }
+      } else {
+        renderError(`Không thể kết nối đến Backend (${BACKEND_URL}). Vui lòng kiểm tra lại cấu hình BACKEND_URL.`);
+      }
     } finally {
       if (sendBtn) sendBtn.disabled = false;
       if (input) input.focus();

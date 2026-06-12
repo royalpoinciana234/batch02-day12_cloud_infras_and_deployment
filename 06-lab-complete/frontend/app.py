@@ -5,8 +5,14 @@ import httpx
 import streamlit as st
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
-if BACKEND_URL and not BACKEND_URL.startswith("http"):
-    BACKEND_URL = f"https://{BACKEND_URL}"
+if BACKEND_URL:
+    if not BACKEND_URL.startswith("http"):
+        BACKEND_URL = f"https://{BACKEND_URL}"
+    if "onrender.com" in BACKEND_URL and BACKEND_URL.startswith("http://"):
+        BACKEND_URL = BACKEND_URL.replace("http://", "https://")
+    if BACKEND_URL.endswith("/"):
+        BACKEND_URL = BACKEND_URL[:-1]
+
 AGENT_API_KEY = os.getenv("AGENT_API_KEY", "my-secret-key")
 
 AVATAR_PATH = Path(__file__).parent / "avatar.png"
@@ -132,5 +138,12 @@ if prompt:
                 st.error("❌ Mất kết nối backend. Vui lòng thử lại sau.")
             except httpx.TimeoutException:
                 st.error("⏱️ Backend phản hồi quá chậm. Vui lòng thử lại.")
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 401:
+                    st.error("❌ Lỗi xác thực (401): AGENT_API_KEY không chính xác hoặc chưa khớp giữa Frontend và Backend.")
+                elif e.response.status_code == 429:
+                    st.error("⏱️ Quá giới hạn lượt yêu cầu (429). Vui lòng đợi 1 phút và thử lại.")
+                else:
+                    st.error(f"❌ Lỗi máy chủ ({e.response.status_code}): {e.response.text}")
             except Exception as e:
                 st.error(f"❌ Lỗi không xác định: {e}")
