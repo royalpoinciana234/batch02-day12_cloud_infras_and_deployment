@@ -436,7 +436,7 @@
         } else if (status === '429') {
           renderError('Quá giới hạn số lượng yêu cầu (429). Vui lòng thử lại sau 1 phút.');
         } else {
-          renderError(`Lỗi máy chủ (${status}). Vui lòng thử lại sau.`);
+          renderError(`Lỗi máy chủ (${status}) khi gửi yêu cầu tới ${BACKEND_URL}/chat. Vui lòng kiểm tra lại đường dẫn.`);
         }
       } else {
         renderError(`Không thể kết nối đến Backend (${BACKEND_URL}). Vui lòng kiểm tra lại cấu hình BACKEND_URL.`);

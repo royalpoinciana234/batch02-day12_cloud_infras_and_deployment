@@ -10,6 +10,10 @@ if BACKEND_URL:
         BACKEND_URL = f"https://{BACKEND_URL}"
     if "onrender.com" in BACKEND_URL and BACKEND_URL.startswith("http://"):
         BACKEND_URL = BACKEND_URL.replace("http://", "https://")
+    if BACKEND_URL.endswith("/chat"):
+        BACKEND_URL = BACKEND_URL[:-5]
+    if BACKEND_URL.endswith("/chat/"):
+        BACKEND_URL = BACKEND_URL[:-6]
     if BACKEND_URL.endswith("/"):
         BACKEND_URL = BACKEND_URL[:-1]
 

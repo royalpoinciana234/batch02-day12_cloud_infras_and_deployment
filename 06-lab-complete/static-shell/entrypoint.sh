@@ -7,6 +7,14 @@ elif ! echo "$BACKEND_URL" | grep -q "^http"; then
   BACKEND_URL="https://$BACKEND_URL"
 fi
 
+# Force HTTPS for onrender.com URLs
+if echo "$BACKEND_URL" | grep -q "onrender\.com" && echo "$BACKEND_URL" | grep -q "^http://"; then
+  BACKEND_URL=$(echo "$BACKEND_URL" | sed 's|^http://|https://|')
+fi
+
+# Strip trailing /chat or /chat/ or /
+BACKEND_URL=$(echo "$BACKEND_URL" | sed 's|/chat/*$||' | sed 's|/$||')
+
 if [ -z "$AGENT_API_KEY" ]; then
   AGENT_API_KEY="my-secret-key"
 fi
