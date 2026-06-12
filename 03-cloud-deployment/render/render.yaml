@@ -42,9 +42,10 @@ services:
   # ──────────────────────────────────────
   # Redis (dùng Render Redis add-on)
   # ──────────────────────────────────────
-  - type: redis
+  - type: keyvalue
     name: agent-cache
     plan: free
+    ipAllowlist: []
     maxmemoryPolicy: allkeys-lru
 
 # ============================================================
