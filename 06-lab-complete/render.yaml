@@ -46,7 +46,7 @@ services:
     healthCheckPath: /
     autoDeploy: true
     dockerfilePath: 06-lab-complete/frontend/Dockerfile
-    dockerContext: 06-lab-complete/frontend
+    dockerContext: .
     envVars:
       - key: BACKEND_URL
         sync: false
@@ -61,7 +61,7 @@ services:
     healthCheckPath: /
     autoDeploy: true
     dockerfilePath: 06-lab-complete/static-shell/Dockerfile
-    dockerContext: 06-lab-complete/static-shell
+    dockerContext: .
     envVars:
       - key: BACKEND_URL
         sync: false
