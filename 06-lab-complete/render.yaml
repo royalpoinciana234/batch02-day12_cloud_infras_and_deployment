@@ -31,7 +31,7 @@ services:
           name: redis-production
           property: connectionString
 
-redis:
-  - name: redis-production
+  - type: redis
+    name: redis-production
     plan: free
     ipAllowList: []
