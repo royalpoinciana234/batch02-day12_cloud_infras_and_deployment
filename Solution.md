@@ -257,3 +257,33 @@ Flow:
   - User thường: 10 requests/phút (`rate_limiter_user`).
   - Admin: 100 requests/phút (`rate_limiter_admin`).
 - **Cách bypass cho admin:** Hệ thống áp dụng Role-based Rate Limiting. Trong `app.py`, hệ thống kiểm tra `role` của user: nếu `role == "admin"`, hệ thống tự động sử dụng bộ giới hạn dành riêng cho admin (`rate_limiter_admin`) với cấu hình cao hơn (100 req/phút) để nới lỏng giới hạn thay vì bỏ qua hoàn toàn.
+
+---
+
+## Part 6: Final Project - Production-Ready AI Agent (Long Chau AI Triage)
+
+### 1. Kiến trúc hệ thống & Thiết kế Stateless
+Hệ thống được thiết kế hoàn toàn Stateless để có thể scale ngang (horizontal scaling) dễ dàng:
+- **FastAPI Backend (`ai-agent-production`)**: Đóng vai trò xử lý các API endpoint như `/chat`, `/ask`, `/health`, `/ready`, `/metrics` và `/report`. Toàn bộ các instances của backend hoàn toàn không lưu trạng thái (state) trong bộ nhớ RAM cục bộ.
+- **Redis Service (`redis-production`)**: Đóng vai trò là cơ sở dữ liệu lưu trữ tập trung, chịu trách nhiệm lưu:
+  - **Lịch sử hội thoại (Conversation History)**: Cho phép duy trì ngữ cảnh hội thoại xuyên suốt các requests khác nhau của người dùng từ các frontend, thậm chí khi request bị định tuyến qua các replica backend khác nhau.
+  - **Rate Limiter (Sliding Window Log)**: Sử dụng cấu trúc dữ liệu `ZSET` của Redis để ghi nhận và tính toán số lượng request của client trong vòng 60 giây gần nhất, thực thi giới hạn 10 requests/phút.
+  - **Cost Guard**: Lưu trữ và cập nhật số tiền sử dụng (monthly budget) của từng API key.
+- **Nginx Load Balancer**: Đứng trước phân phối tải (Round Robin) đến các container replica của backend, tự động phát hiện và loại bỏ các instance không vượt qua kiểm tra sức khỏe.
+
+### 2. Các điểm cải tiến và Kết quả đạt được
+
+Hệ thống đã được tối ưu hóa để đáp ứng 100% checklist sẵn sàng cho production (20/20 tiêu chí đạt chuẩn):
+
+- **Dockerization**:
+  - Sử dụng **Multi-stage Build** giúp giảm dung lượng image tối đa (~80% dung lượng so với build thông thường).
+  - Chạy dưới quyền user non-root (`agent` / `appuser`) đảm bảo an toàn hệ thống, tránh nguy cơ leo thang đặc quyền.
+  - Loại bỏ các compiler & dependencies thừa (như GCC, apt-cache) khỏi runtime image.
+- **Reliability & Operations**:
+  - Hỗ trợ **Graceful Shutdown** bắt tín hiệu `SIGTERM` để kết thúc các request đang xử lý dở dang (in-flight requests) trước khi tắt container.
+  - Tích hợp kiểm tra sức khỏe thông qua **Liveness Check (`/health`)** và **Readiness Check (`/ready`)** (thực hiện ping Redis để đảm bảo kết nối ổn định).
+  - Log được ghi nhận dưới định dạng **Structured JSON Logging** xuất trực tiếp ra stdout giúp các hệ thống Log Aggregator (loki, datadog) dễ dàng thu thập và phân tích.
+- **Frontend UI Integration & Deployment**:
+  - Deploy thành công cả 2 phần UI riêng biệt trên Render: **Streamlit App** (`longchau-streamlit`) và **Static Shell Landing Page & Widget** (`longchau-static`).
+  - Giao diện static shell sử dụng script `entrypoint.sh` tại thời điểm container startup để tự động đọc `BACKEND_URL` và `AGENT_API_KEY` từ môi trường và ghi đè vào file `index.html` (thay vì bị fix cứng ở `localhost:8000`), giúp frontend linh hoạt và cấu hình động được.
+  - Frontend được cập nhật tự động làm sạch URL (loại bỏ hậu tố `/chat` dư thừa) và tự động bắt lỗi chi tiết (401, 429) để hiển thị thân thiện nhất với người dùng.
