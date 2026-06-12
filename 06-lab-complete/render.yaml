@@ -30,9 +30,11 @@ services:
           name: redis-production
           property: connectionString
 
-redis:
-  - name: redis-production
+# ──────────────────────────────────────
+  # Redis (dùng Render Redis add-on)
+  # ──────────────────────────────────────
+  - type: keyvalue
+    name: agent-cache
     plan: free
     ipAllowList: []
-    type: keyvalue
     maxmemoryPolicy: allkeys-lru
