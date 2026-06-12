@@ -49,7 +49,7 @@ services:
     dockerContext: 06-lab-complete/frontend
     envVars:
       - key: BACKEND_URL
-        value: https://ai-agent-production-2q2r.onrender.com
+        sync: false
       - key: AGENT_API_KEY
         value: my-secret-key
 
@@ -64,6 +64,6 @@ services:
     dockerContext: 06-lab-complete/static-shell
     envVars:
       - key: BACKEND_URL
-        value: https://ai-agent-production-2q2r.onrender.com
+        sync: false
       - key: AGENT_API_KEY
         value: my-secret-key
