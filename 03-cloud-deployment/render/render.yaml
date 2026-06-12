@@ -45,7 +45,7 @@ services:
   - type: keyvalue
     name: agent-cache
     plan: free
-    ipAllowlist: []
+    ipAllowList: []
     maxmemoryPolicy: allkeys-lru
 
 # ============================================================
