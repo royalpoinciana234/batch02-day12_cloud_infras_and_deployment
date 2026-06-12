@@ -260,30 +260,35 @@ Flow:
 
 ---
 
-## Part 6: Final Project - Production-Ready AI Agent (Long Chau AI Triage)
+## Part 6: Final Project
 
-### 1. Kiến trúc hệ thống & Thiết kế Stateless
-Hệ thống được thiết kế hoàn toàn Stateless để có thể scale ngang (horizontal scaling) dễ dàng:
-- **FastAPI Backend (`ai-agent-production`)**: Đóng vai trò xử lý các API endpoint như `/chat`, `/ask`, `/health`, `/ready`, `/metrics` và `/report`. Toàn bộ các instances của backend hoàn toàn không lưu trạng thái (state) trong bộ nhớ RAM cục bộ.
-- **Redis Service (`redis-production`)**: Đóng vai trò là cơ sở dữ liệu lưu trữ tập trung, chịu trách nhiệm lưu:
-  - **Lịch sử hội thoại (Conversation History)**: Cho phép duy trì ngữ cảnh hội thoại xuyên suốt các requests khác nhau của người dùng từ các frontend, thậm chí khi request bị định tuyến qua các replica backend khác nhau.
-  - **Rate Limiter (Sliding Window Log)**: Sử dụng cấu trúc dữ liệu `ZSET` của Redis để ghi nhận và tính toán số lượng request của client trong vòng 60 giây gần nhất, thực thi giới hạn 10 requests/phút.
-  - **Cost Guard**: Lưu trữ và cập nhật số tiền sử dụng (monthly budget) của từng API key.
-- **Nginx Load Balancer**: Đứng trước phân phối tải (Round Robin) đến các container replica của backend, tự động phát hiện và loại bỏ các instance không vượt qua kiểm tra sức khỏe.
+**Project:** `06-lab-complete`  
+**Tên agent:** Long Châu AI Triage Agent  
+**Live deployment:** API `https://ai-agent-production-2q2r.onrender.com`, Static Shell `https://longchau-static.onrender.com`
 
-### 2. Các điểm cải tiến và Kết quả đạt được
+### Functional Requirements
+- **Agent works:** API trả lời được các route nghiệp vụ: `factual`, `advisory_gather`, `advisory_handoff`, `out_of_scope`, `crisis`.
+- **Conversation history:** Lịch sử chat được lưu trữ tập trung trong Redis theo `session_id` để duy trì ngữ cảnh.
+- **Error handling:** Trả về lỗi `401` nếu thiếu/sai API key, `429` nếu vượt rate limit, và `402` nếu vượt budget tháng.
 
-Hệ thống đã được tối ưu hóa để đáp ứng 100% checklist sẵn sàng cho production (20/20 tiêu chí đạt chuẩn):
+### Docker & Configuration
+- **Dockerfile:** Multi-stage Dockerfile tại `06-lab-complete/Dockerfile` sử dụng `python:3.12-slim`, chạy dưới quyền non-root `agent` và tích hợp `HEALTHCHECK`.
+- **Docker Compose:** Tách biệt `nginx` (cổng 80) làm Load Balancer, `agent` (3 replicas), và `redis` làm cơ sở lưu trữ dữ liệu.
+- **Config:** Quản lý cấu hình qua `app/config.py` đọc từ environment variables.
 
-- **Dockerization**:
-  - Sử dụng **Multi-stage Build** giúp giảm dung lượng image tối đa (~80% dung lượng so với build thông thường).
-  - Chạy dưới quyền user non-root (`agent` / `appuser`) đảm bảo an toàn hệ thống, tránh nguy cơ leo thang đặc quyền.
-  - Loại bỏ các compiler & dependencies thừa (như GCC, apt-cache) khỏi runtime image.
-- **Reliability & Operations**:
-  - Hỗ trợ **Graceful Shutdown** bắt tín hiệu `SIGTERM` để kết thúc các request đang xử lý dở dang (in-flight requests) trước khi tắt container.
-  - Tích hợp kiểm tra sức khỏe thông qua **Liveness Check (`/health`)** và **Readiness Check (`/ready`)** (thực hiện ping Redis để đảm bảo kết nối ổn định).
-  - Log được ghi nhận dưới định dạng **Structured JSON Logging** xuất trực tiếp ra stdout giúp các hệ thống Log Aggregator (loki, datadog) dễ dàng thu thập và phân tích.
-- **Frontend UI Integration & Deployment**:
-  - Deploy thành công cả 2 phần UI riêng biệt trên Render: **Streamlit App** (`longchau-streamlit`) và **Static Shell Landing Page & Widget** (`longchau-static`).
-  - Giao diện static shell sử dụng script `entrypoint.sh` tại thời điểm container startup để tự động đọc `BACKEND_URL` và `AGENT_API_KEY` từ môi trường và ghi đè vào file `index.html` (thay vì bị fix cứng ở `localhost:8000`), giúp frontend linh hoạt và cấu hình động được.
-  - Frontend được cập nhật tự động làm sạch URL (loại bỏ hậu tố `/chat` dư thừa) và tự động bắt lỗi chi tiết (401, 429) để hiển thị thân thiện nhất với người dùng.
+### Security
+- **API Key auth:** Xác thực qua header `X-API-Key` so khớp với `AGENT_API_KEY`.
+- **Rate limiting:** Thuật toán Sliding Window sử dụng Redis `ZSET` giới hạn 10 requests/phút.
+- **Cost guard:** Quản lý ngân sách hàng tháng cho mỗi user sử dụng Redis keys.
+
+### Reliability
+- **Health check:** `GET /health` (liveness).
+- **Readiness check:** `GET /ready` (readiness check kết nối Redis).
+- **Graceful shutdown:** Xử lý tín hiệu `SIGTERM` để hoàn thành request đang xử lý trước khi dừng container.
+- **Stateless design:** Không lưu state trong bộ nhớ RAM cục bộ của các container backend.
+
+### Deployment
+- **API URL:** `https://ai-agent-production-2q2r.onrender.com`
+- **Static Shell:** `https://longchau-static.onrender.com`
+- Cấu hình file Blueprint `render.yaml` tự động deploy cả 3 dịch vụ trên Render và tự động liên kết cơ sở dữ liệu Redis.
+
