@@ -6,6 +6,8 @@ services:
     plan: free
     healthCheckPath: /health
     autoDeploy: true
+    dockerFilePath: 06-lab-complete/Dockerfile
+    dockerContext: 06-lab-complete
     envVars:
       - key: ENVIRONMENT
         value: production
