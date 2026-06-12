@@ -34,3 +34,5 @@ redis:
   - name: redis-production
     plan: free
     ipAllowList: []
+    type: keyvalue
+    maxmemoryPolicy: allkeys-lru
