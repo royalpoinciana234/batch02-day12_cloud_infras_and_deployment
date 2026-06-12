@@ -18,7 +18,9 @@ class Settings:
 
     # LLM
     openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
-    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o-mini"))
+    openrouter_api_key: str = field(default_factory=lambda: os.getenv("OPENROUTER_API_KEY", ""))
+    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "openai/gpt-4o-mini"))
+    openrouter_model: str = field(default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini"))
 
     # Security
     agent_api_key: str = field(default_factory=lambda: os.getenv("AGENT_API_KEY", "dev-key-change-me"))
@@ -47,9 +49,10 @@ class Settings:
                 raise ValueError("AGENT_API_KEY must be set in production!")
             if self.jwt_secret == "dev-jwt-secret":
                 raise ValueError("JWT_SECRET must be set in production!")
-        if not self.openai_api_key:
-            logger.warning("OPENAI_API_KEY not set — using mock LLM")
+        if not self.openrouter_api_key and not self.openai_api_key:
+            logger.warning("Neither OPENROUTER_API_KEY nor OPENAI_API_KEY set — using mock LLM")
         return self
 
 
 settings = Settings().validate()
+

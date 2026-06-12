@@ -3,7 +3,7 @@ services:
     name: ai-agent-production
     runtime: docker
     region: singapore
-    plan: starter
+    plan: free
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -11,13 +11,26 @@ services:
         value: production
       - key: APP_VERSION
         value: "1.0.0"
-      - key: OPENAI_API_KEY
+      - key: OPENROUTER_API_KEY
         sync: false
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-4o-mini
+      - key: LLM_MODEL
+        value: openai/gpt-4o-mini
       - key: AGENT_API_KEY
-        generateValue: true
+        value: my-secret-key
       - key: JWT_SECRET
         generateValue: true
       - key: DAILY_BUDGET_USD
-        value: "5.0"
+        value: "10.0"
       - key: RATE_LIMIT_PER_MINUTE
-        value: "20"
+        value: "10"
+      - key: REDIS_URL
+        fromRedis:
+          name: redis-production
+          property: connectionString
+
+redis:
+  - name: redis-production
+    plan: free
+    ipAllowList: []
