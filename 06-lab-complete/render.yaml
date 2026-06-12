@@ -26,15 +26,12 @@ services:
       - key: RATE_LIMIT_PER_MINUTE
         value: "10"
       - key: REDIS_URL
-        fromRedis:
+        fromService:
+          type: redis
           name: redis-production
           property: connectionString
 
-# ──────────────────────────────────────
-  # Redis (dùng Render Redis add-on)
-  # ──────────────────────────────────────
-  - type: keyvalue
-    name: agent-cache
+redis:
+  - name: redis-production
     plan: free
     ipAllowList: []
-    maxmemoryPolicy: allkeys-lru
